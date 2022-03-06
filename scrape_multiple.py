@@ -50,7 +50,7 @@ def get_proxies() -> set:
     return proxies
 
 
-def scrape(url: str, proxy: dict = None) -> pd.DataFrame:
+def scrape(url: str, proxies: dict = None) -> pd.DataFrame:
     """ Returns a Pandas DataFrame object from given URL.
 
     Args:
@@ -60,8 +60,8 @@ def scrape(url: str, proxy: dict = None) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Data extracted from given URL.
     """
-    if proxy:
-        html = BeautifulSoup(requests.get(url, proxies=proxy).content.decode('utf-8'), "html.parser")
+    if proxies:
+        html = BeautifulSoup(requests.get(url, proxies=proxies).content.decode('utf-8'), "html.parser")
     else:
         html = BeautifulSoup(requests.get(url).content.decode('utf-8'), "html.parser")
 
