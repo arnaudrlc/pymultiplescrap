@@ -50,21 +50,16 @@ def get_proxies() -> set:
     return proxies
 
 
-def scrape(url: str, proxies: dict = None) -> pd.DataFrame:
+def scrape(url: str, **kwargs) -> pd.DataFrame:
     """ Returns a Pandas DataFrame object from given URL.
 
     Args:
         url (str): URL from which to scrape data.
-        proxies (dict, optional): If using rotating proxies, HTTP proxies from pool.
 
     Returns:
         pd.DataFrame: Data extracted from given URL.
     """
-    if proxies:
-        html = BeautifulSoup(requests.get(url, proxies=proxies).content.decode('utf-8'), "html.parser")
-    else:
-        html = BeautifulSoup(requests.get(url).content.decode('utf-8'), "html.parser")
-
+    html = BeautifulSoup(requests.get(url, **kwargs).content.decode('utf-8'), "html.parser")
     data = {
         "link": [a.text.strip() for a in html.find_all("a", class_="mp-Listing-coverLink")],
         "bike_name": [h3.text.strip() for h3 in html.find_all("h3", class_="mp-Listing-title")],
@@ -92,7 +87,7 @@ def scrape_multiple(base_url: str, page_count: int, timeout: int = 30) -> pd.Dat
     for i in range(page_count):
         current_proxy = next(rotating_proxies)
         url = f"{base_url}{i}/"
-        _ = scrape(url, {"http": current_proxy, "https": current_proxy})
+        _ = scrape(url, proxies={"http": current_proxy, "https": current_proxy})
         df = pd.concat([df, _], ignore_index=True)
         time.sleep(timeout)
 
