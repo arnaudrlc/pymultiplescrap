@@ -28,8 +28,8 @@ def get_proxies() -> set:
 
     To avoid being blocked, several options are aviable.
 
-    This programm choses to rotate IP address ov a proxy pool obtained
-    from that function.
+    This programm choses to rotate IP address over a proxy pool obtained
+    from this function.
 
     Returns:
         set: proxies
