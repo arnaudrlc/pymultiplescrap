@@ -8,19 +8,19 @@ Scrapes data from multiple pages.
 """
 
 import time
-import requests
-import pandas as pd
-from bs4 import BeautifulSoup
-from lxml.html import fromstring
 from itertools import cycle
 
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+from lxml.html import fromstring
 
 PROXIES_SOURCE = "https://free-proxy-list.net/"
 BASE_URL = "https://www.marktplaats.nl/l/fietsen-en-brommers/fietsen-GENDER-GENDERfietsen/p/"
 
 
 def get_proxies() -> set:
-    """ Returns a set of proxies.
+    """Returns a set of proxies.
 
     When sending multiple requests from the same IP, for instance when
     scrapping a website through HTTP protocol, the website may detect
@@ -41,17 +41,19 @@ def get_proxies() -> set:
     for el in parser.xpath("//tbody/tr"):
         # Checks if the corresponding IP address is of type HTTPS:
         if el.xpath('.//td[7][contains(text(),"yes")]'):
-            proxy = ":".join([
-                el.xpath(".//td[1]/text()")[0],  # IP address
-                el.xpath(".//td[2]/text()")[0]  # Port
-            ])
+            proxy = ":".join(
+                [
+                    el.xpath(".//td[1]/text()")[0],  # IP address
+                    el.xpath(".//td[2]/text()")[0],  # Port
+                ]
+            )
             proxies.add(proxy)
 
     return proxies
 
 
 def scrape(url: str, **kwargs) -> pd.DataFrame:
-    """ Returns a Pandas DataFrame object from given URL.
+    """Returns a Pandas DataFrame object from given URL.
 
     Args:
         url (str): URL from which to scrape data.
@@ -59,12 +61,12 @@ def scrape(url: str, **kwargs) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Data extracted from given URL.
     """
-    html = BeautifulSoup(requests.get(url, **kwargs).content.decode('utf-8'), "html.parser")
+    html = BeautifulSoup(requests.get(url, **kwargs).content.decode("utf-8"), "html.parser")
     data = {
         "link": [a.text.strip() for a in html.find_all("a", class_="mp-Listing-coverLink")],
         "bike_name": [h3.text.strip() for h3 in html.find_all("h3", class_="mp-Listing-title")],
         "price": [span.text.strip() for span in html.find_all("span", class_="mp-Listing-price mp-text-price-label")],
-        "condition": [div.text.strip() for div in html.find_all("div", class_="mp-Listing-attributes")]
+        "condition": [div.text.strip() for div in html.find_all("div", class_="mp-Listing-attributes")],
     }
 
     return pd.DataFrame(data)
