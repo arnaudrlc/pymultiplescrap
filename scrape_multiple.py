@@ -96,6 +96,10 @@ def scrape_multiple(base_url: str, page_count: int, timeout: int = 30) -> pd.Dat
     return df
 
 
-if __name__ == "__main__":
+def _main():
     for g in "heren", "dames":  # Men, women
         scrape_multiple(BASE_URL.replace("GENDER", g), 100, 30).to_csv(f"{g}.csv")
+
+
+if __name__ == "__main__":
+    _main()
